@@ -3,14 +3,14 @@
 **Course:** Data Exploration and Visualization (Mini Project)  
 **Author / GitHub:** [DineshMoorthy007](https://github.com/DineshMoorthy007)  
 **Repository:** [error-visualization-experimental-data](https://github.com/DineshMoorthy007/error-visualization-experimental-data)  
-**Current Status:** Phase 2 Completed (Data Exploration, Preprocessing, Outlier Detection & Error Analysis)
+**Current Status:** Phase 3 Completed (Data Visualization & Visual Analysis)
 
 ---
 
 ## 1. Project Overview
 In physical and engineering sciences, experimental measurements are inherently subject to experimental uncertainties, environmental disturbances, instrumental limits, and human timing errors. This mini project investigates measurement discrepancies by analyzing experimental data from a **Simple Pendulum Experiment**.
 
-Using Python and data exploration techniques, this project explores experimental observations, calculates discrepancy metrics (Error, Absolute Error, Relative Error, and Percentage Error), identifies statistical outliers using the Interquartile Range (IQR) method, evaluates descriptive statistical properties, and builds a solid foundation for publication-quality visual diagnostics in Phase 3.
+Using Python, Pandas, Matplotlib, and Seaborn, this project explores experimental observations, calculates discrepancy metrics (Error, Absolute Error, Relative Error, and Percentage Error), identifies statistical outliers using the Interquartile Range (IQR) method, evaluates descriptive statistical properties, and provides a publication-quality suite of **seven academic visualizations**.
 
 ---
 
@@ -25,7 +25,7 @@ Without structured error visualization and statistical exploration, students and
 ---
 
 ## 3. Aim
-To explore, preprocess, validate, and analyze experimental measurement data from a simple pendulum system using Python, evaluating empirical time period variations against theoretical physics models, quantifying measurement error metrics, detecting statistical anomalies, and preparing structured statistical summaries for graphical visualization.
+To explore, preprocess, validate, analyze, and visualize experimental measurement data from a simple pendulum system using Python, evaluating empirical time period variations against theoretical physics models, quantifying measurement error metrics, detecting statistical anomalies, and generating publication-quality visual diagnostics.
 
 ---
 
@@ -38,7 +38,7 @@ To explore, preprocess, validate, and analyze experimental measurement data from
 6. **Error Classification:** Categorize experimental trials into project-defined analytical error quality tiers (Low, Moderate, High Error).
 7. **Descriptive Statistical Analysis:** Compute central tendency, dispersion, variance, standard deviation, and quartiles.
 8. **Length-wise Group Aggregation:** Generate aggregated statistical summaries across all 8 pendulum length configurations.
-9. **Exploratory Data Visualization (Phase 3):** Produce multi-chart diagnostic visual figures.
+9. **Exploratory Data Visualization:** Programmatically generate seven distinct, publication-quality visualizations covering line, bar, pie, box, scatter, histogram, and correlation heatmap charts.
 
 ---
 
@@ -125,7 +125,20 @@ The preprocessing pipeline applies explicit verification rules:
 
 ---
 
-## 11. Technologies Used
+## 11. Visualizations
+All visualizations are generated programmatically using Python, Matplotlib, and Seaborn with a consistent high-resolution academic styling theme (300 DPI) and stored in `visualizations/`:
+
+1. **Experimental vs Theoretical Period (`01_experimental_vs_theoretical_line.png`):** Line chart comparing mean experimental periods (with standard deviation error bars) against the theoretical physics prediction across all lengths.
+2. **Average Percentage Error by Length (`02_percentage_error_bar.png`):** Bar chart displaying length-wise mean percentage errors annotated with exact values and benchmarked against the dataset mean ($1.52\%$).
+3. **Error Category Distribution (`03_error_category_pie.png`):** Pie chart showing proportional composition across Low Error (48.8%), Moderate Error (28.8%), and High Error (22.5%) tiers.
+4. **Experimental Period Box Plot (`04_experimental_period_boxplot.png`):** Box and whisker plot visualizing medians, interquartile spreads, and visible outlier points across all 8 length configurations.
+5. **Length vs Experimental Period Scatter Plot (`05_length_vs_period_scatter.png`):** Scatter plot displaying all 80 individual experimental observations distinguished into inliers and flagged outliers against the theoretical curve.
+6. **Percentage Error Distribution (`06_error_distribution_histogram.png`):** Histogram and KDE plot showing the right-skewed distribution of percentage errors with mean ($1.52\%$) and median ($1.01\%$) reference markers.
+7. **Correlation Heatmap (`07_correlation_heatmap.png`):** Annotated Pearson correlation matrix evaluating linear dependencies between physical dimensions and error metrics.
+
+---
+
+## 12. Technologies Used
 - **Python (>= 3.10):** Core programming language
 - **Pandas (>= 2.0.0):** Tabular data manipulation, aggregation, and statistical summarization
 - **NumPy (>= 1.24.0):** Numerical computation and vectorized error formulas
@@ -136,7 +149,7 @@ The preprocessing pipeline applies explicit verification rules:
 
 ---
 
-## 12. Project Structure
+## 13. Project Structure
 ```
 error-visualization-experimental-data/
 │
@@ -146,14 +159,21 @@ error-visualization-experimental-data/
 │       └── pendulum_processed_data.csv      # Enriched processed dataset (80 records, 11 attributes)
 │
 ├── notebooks/
-│   └── error_visualization.ipynb            # Jupyter Notebook with Phase 1 & 2 analysis
+│   └── error_visualization.ipynb            # Complete Jupyter Notebook (Sections 1 to 14)
 │
 ├── src/
 │   ├── data_preprocessing.py                # Dataset loader, exploration & validation routines
 │   ├── error_analysis.py                    # Error calculation, classification & statistics
-│   └── visualization.py                     # Plotting routines (for Phase 3)
+│   └── visualization.py                     # Modular plotting routines & batch figure generator
 │
-├── visualizations/                          # Output directory for exported figures
+├── visualizations/                          # Output directory for exported 300 DPI figures
+│   ├── 01_experimental_vs_theoretical_line.png
+│   ├── 02_percentage_error_bar.png
+│   ├── 03_error_category_pie.png
+│   ├── 04_experimental_period_boxplot.png
+│   ├── 05_length_vs_period_scatter.png
+│   ├── 06_error_distribution_histogram.png
+│   └── 07_correlation_heatmap.png
 │
 ├── docs/                                    # Academic reports and documentation
 │
@@ -165,7 +185,7 @@ error-visualization-experimental-data/
 
 ---
 
-## 13. Methodology
+## 14. Methodology
 ```
 [ Raw Dataset Ingestion ]
           │
@@ -197,36 +217,18 @@ error-visualization-experimental-data/
 [ Save Processed Dataset ] (data/processed/pendulum_processed_data.csv)
           │
           ▼
-[ Data Visualization Suite ] (Scheduled for Phase 3)
+[ Data Visualization Suite ] (7 High-Resolution Figures: Line, Bar, Pie, Box, Scatter, Hist, Heatmap)
 ```
 
 ---
 
-## 14. Current Phase Status
-### Phase 2: Data Exploration, Preprocessing & Error Analysis (Completed)
-- [x] Data exploration completed (dimensions, data types, descriptive info).
-- [x] Data quality analysis confirmed 0 missing values, 0 duplicates, 100% valid physical measurements.
-- [x] Preprocessing executed with strict unit preservation.
-- [x] Error calculations formulated and verified (`Error_s`, `Absolute_Error_s`, `Relative_Error`, `Percentage_Error`).
-- [x] IQR outlier detection executed (5 potential outliers identified and flagged).
-- [x] Error classification implemented (Low Error: 48.75%, Moderate Error: 28.75%, High Error: 22.50%).
-- [x] Descriptive statistical summary table computed covering all 11 required academic metrics.
-- [x] Grouped summary table aggregated across all 8 pendulum lengths.
-- [x] Processed dataset exported to `data/processed/pendulum_processed_data.csv`.
-- [x] Reusable functions integrated into `src/data_preprocessing.py` and `src/error_analysis.py`.
-- [x] Jupyter Notebook `notebooks/error_visualization.ipynb` updated with 14 foundation and analytical sections.
-
----
-
-## 15. Future Analysis (Phase 3 Roadmap)
-In Phase 3, the final visualization suite will be implemented:
-1. **Plot 1:** Theoretical vs. Experimental Period Curve (Scatter & Theoretical Line)
-2. **Plot 2:** Error Distribution Analysis (Histograms & KDE of Absolute and Percentage Errors)
-3. **Plot 3:** Period Distribution Across Length Groups (Box & Whisker Plots with Outlier Overlays)
-4. **Plot 4:** Error Residuals vs. Pendulum Length (Residual Scatter Plot)
-5. **Plot 5:** Error Quality Tier Composition (Pie Chart of Error Categories)
-6. **Plot 6:** Correlation Heatmap of Physical and Error Variables
-7. **Lab Record Deliverables:** Formulating key findings, conclusion, and results.
+## 15. Current Phase Status
+### Phase 3: Data Visualization & Visual Analysis (Completed)
+- [x] All 7 required visualizations implemented in `src/visualization.py`.
+- [x] All 7 high-resolution PNG images generated and saved to `visualizations/`.
+- [x] Jupyter Notebook `notebooks/error_visualization.ipynb` updated with Section 14 (subsections 14.1 to 14.7) and data-grounded interpretations.
+- [x] README updated with complete Visualizations catalog and methodology.
+- [x] All automated validation tests passed.
 
 ---
 
@@ -243,13 +245,16 @@ cd error-visualization-experimental-data
 pip install -r requirements.txt
 ```
 
-### Step 3: Run Preprocessing & Error Analysis
+### Step 3: Run Data Processing & Visualization Scripts
 ```bash
 # Run data preprocessing and exploration
 python src/data_preprocessing.py
 
 # Run complete error analysis and statistical pipeline
 python src/error_analysis.py
+
+# Generate all 7 visualization plots
+python src/visualization.py
 ```
 
 ### Step 4: Launch Interactive Jupyter Notebook
