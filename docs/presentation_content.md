@@ -2,7 +2,7 @@
 
 **Project Title:** Error Visualization and Analysis of Experimental Data Using Python  
 **Course:** Data Exploration and Visualization (Mini Project Presentation)  
-**Author:** Dinesh Moorthy ([DineshMoorthy007](https://github.com/DineshMoorthy007))  
+**Author:** Dinesh Moorthy S R ([DineshMoorthy007](https://github.com/DineshMoorthy007))  
 **Academic Environment:** Python, Jupyter Notebook, Pandas, NumPy, Matplotlib, Seaborn, Git, GitHub  
 
 ---
@@ -11,7 +11,7 @@
 - **Project Title:** Error Visualization and Analysis of Experimental Data Using Python
 - **Subtitle:** Computational Diagnostics, Statistical Modeling & Visual Exploration of Simple Pendulum Measurements
 - **Course:** Data Exploration and Visualization (Mini Project)
-- **Author:** Dinesh Moorthy (DineshMoorthy007)
+- **Author:** Dinesh Moorthy S R (DineshMoorthy007)
 - **Tech Stack:** Python 3 | Pandas | NumPy | Matplotlib | Seaborn | Jupyter Notebook | GitHub
 
 ---

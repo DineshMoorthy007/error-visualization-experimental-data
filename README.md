@@ -1,7 +1,7 @@
 # Error Visualization and Analysis of Experimental Data Using Python
 
 **Course:** Data Exploration and Visualization (Mini Project)  
-**Author / GitHub:** [DineshMoorthy007](https://github.com/DineshMoorthy007)  
+**Author / GitHub:** [Dinesh Moorthy S R](https://github.com/DineshMoorthy007)  
 **Repository:** [error-visualization-experimental-data](https://github.com/DineshMoorthy007/error-visualization-experimental-data)  
 **Status:** Completed & Submission-Ready  
 
@@ -16,7 +16,7 @@ Using Python, Pandas, NumPy, Matplotlib, and Seaborn, this project analyzes 80 e
 
 ## Problem Statement
 Laboratory measurements rarely match theoretical mathematical predictions perfectly. When measuring the time period of a simple pendulum:
-- Manual stopwatch triggers suffer from human visual-auditory reaction time delays ($\approx 0.02 - 0.04\,\text{s}$).
+- Manual stopwatch triggers suffer from human visual-auditory reaction time delays ($\approx 0.02 - 0.04\text{ s}$).
 - Small-angle approximations ($\sin\theta \approx \theta$) introduce subtle non-linearities at higher oscillation amplitudes.
 - Environmental damping and pivot friction alter oscillation cycles over time.
 
@@ -32,7 +32,7 @@ To explore, preprocess, validate, analyze, and visualize experimental measuremen
 ## Objectives
 1. **Dataset Ingestion & Exploration:** Ingest and inspect experimental observations covering 8 distinct pendulum lengths with 10 repeated trials ($N = 80$).
 2. **Data Quality Verification:** Verify dataset completeness (0 missing values), absence of duplicates, and physical validity ($L > 0, T_{\text{theo}} > 0, T_{\text{exp}} > 0$).
-3. **Data Preprocessing:** Standardize numeric types and precision while preserving original metric measurement units ($\text{m}$ and $\text{s}$).
+3. **Data Preprocessing:** Standardize numeric types and precision while preserving original metric measurement units (metres and seconds).
 4. **Variable Taxonomy:** Classify experimental attributes into independent, dependent, reference, and identifier categories.
 5. **Outlier Detection:** Isolate statistical anomalies using the Interquartile Range (IQR) method ($1.5 \times \text{IQR}$) and flag them with `Outlier_Flag` without data deletion.
 6. **Error Metrics Formulation:** Programmatically compute signed algebraic Error ($T_{\text{exp}} - T_{\text{theo}}$), Absolute Error, Relative Error, and Percentage Error.
@@ -46,7 +46,7 @@ To explore, preprocess, validate, analyze, and visualize experimental measuremen
 ## Dataset
 
 ### Dataset Description
-The dataset records the oscillation period of a simple pendulum across multiple physical lengths under gravitational acceleration ($g = 9.81\,\text{m/s}^2$).
+The dataset records the oscillation period of a simple pendulum across multiple physical lengths under gravitational acceleration ($g = 9.81\text{ m/s}^2$).
 
 #### Mathematical Model
 The theoretical period $T$ of a simple pendulum undergoing small angular oscillations is given by:
@@ -56,11 +56,11 @@ $$T = 2\pi \sqrt{\frac{L}{g}}$$
 Where:
 - $L$: Length of the pendulum in metres ($\text{m}$)
 - $T$: Theoretical period of oscillation in seconds ($\text{s}$)
-- $g$: Acceleration due to gravity ($9.81\,\text{m/s}^2$)
+- $g$: Acceleration due to gravity ($9.81\text{ m/s}^2$)
 
 ### Dataset Source
 **Simulated / Constructed Educational Experimental Dataset:**  
-The dataset was synthetically generated for educational and analytical purposes using Python (`numpy.random` with fixed random seed `42`). It mathematically models theoretical pendulum physics while incorporating realistic Gaussian timing noise ($\sigma \approx 0.022\,\text{s}$), a slight positive human reaction bias ($+0.008\,\text{s}$), and controlled experimental perturbations for outlier analysis.
+The dataset was synthetically generated for educational and analytical purposes using Python (`numpy.random` with fixed random seed `42`). It mathematically models theoretical pendulum physics while incorporating realistic Gaussian timing noise ($\sigma \approx 0.022\text{ s}$), a slight positive human reaction bias ($+0.008\text{ s}$), and controlled experimental perturbations for outlier analysis.
 
 > *Note: This dataset does not originate from an external repository (such as Kaggle or UCI) nor does it claim to be physically gathered in a live laboratory.*
 
@@ -68,7 +68,7 @@ The dataset was synthetically generated for educational and analytical purposes 
 - **Total Records (Observations):** 80 rows
 - **Raw Attributes (Variables):** 5 columns
 - **Processed Attributes:** 11 columns (including error metrics, categories, and outlier flags)
-- **Number of Length Groups:** 8 unique lengths ($0.20\,\text{m}, 0.30\,\text{m}, 0.40\,\text{m}, 0.50\,\text{m}, 0.60\,\text{m}, 0.70\,\text{m}, 0.80\,\text{m}, 1.00\,\text{m}$)
+- **Number of Length Groups:** 8 unique lengths ($0.20\text{ m}, 0.30\text{ m}, 0.40\text{ m}, 0.50\text{ m}, 0.60\text{ m}, 0.70\text{ m}, 0.80\text{ m}, 1.00\text{ m}$)
 - **Trials per Length:** 10 trials
 - **File Format:** CSV (Comma-Separated Values)
 - **Raw Data Path:** `data/pendulum_experimental_data.csv`
@@ -79,9 +79,9 @@ The dataset was synthetically generated for educational and analytical purposes 
 | :--- | :--- | :--- | :--- |
 | `Experiment_ID` | String / Object | Unique observation identifier | Nominal (`EXP001` - `EXP080`) |
 | `Trial_Number` | Integer | Repetition trial index for a given length | Discrete Numerical ($1 - 10$) |
-| `Length_m` | Float | Measured length of the pendulum | Continuous Independent ($0.20 - 1.00\,\text{m}$) |
-| `Theoretical_Period_s` | Float | Theoretical period from $T = 2\pi\sqrt{L/g}$ | Continuous Reference ($0.8971 - 2.0061\,\text{s}$) |
-| `Experimental_Period_s` | Float | Recorded experimental oscillation period | Continuous Dependent ($0.8948 - 2.0485\,\text{s}$) |
+| `Length_m` | Float | Measured length of the pendulum | Continuous Independent ($0.20 - 1.00\text{ m}$) |
+| `Theoretical_Period_s` | Float | Theoretical period from $T = 2\pi\sqrt{L/g}$ | Continuous Reference ($0.8971 - 2.0061\text{ s}$) |
+| `Experimental_Period_s` | Float | Recorded experimental oscillation period | Continuous Dependent ($0.8948 - 2.0485\text{ s}$) |
 | `Error_s` | Float | Signed error ($T_{\text{exp}} - T_{\text{theo}}$) | Derived Metric (seconds) |
 | `Absolute_Error_s` | Float | Magnitude of error ($|T_{\text{exp}} - T_{\text{theo}}|$) | Derived Metric (seconds) |
 | `Relative_Error` | Float | Dimensionless ratio ($\text{Absolute Error} / T_{\text{theo}}$) | Derived Dimensionless Metric |
@@ -134,21 +134,21 @@ The dataset was synthetically generated for educational and analytical purposes 
 ## Error Analysis
 Discrepancies were formulated using four standard mathematical equations:
 
-1. **Signed Algebraic Error ($\text{Error}_s$):**
-   $$\text{Error}_s = T_{\text{exp}} - T_{\text{theo}}$$
-   *Mean Result:* $+0.0069\,\text{s}$ (Net positive bias due to stopwatch trigger delay).
+1. **Signed Algebraic Error** (`Error_s`):
+   $$E = T_{\text{exp}} - T_{\text{theo}}$$
+   - *Mean Result:* $+0.0069\text{ s}$ (Net positive bias due to stopwatch trigger delay).
 
-2. **Absolute Error ($\text{Absolute\_Error}_s$):**
-   $$\text{Absolute\_Error}_s = |T_{\text{exp}} - T_{\text{theo}}|$$
-   *Mean Result:* $0.0214\,\text{s}$ ($21.4\,\text{ms}$, typical of human visual-auditory reaction time).
+2. **Absolute Error** (`Absolute_Error_s`):
+   $$E_{\text{abs}} = |T_{\text{exp}} - T_{\text{theo}}|$$
+   - *Mean Result:* $0.0214\text{ s}$ ($21.4\text{ ms}$, typical of human visual-auditory reaction time).
 
-3. **Relative Error ($\text{Relative\_Error}$):**
-   $$\text{Relative\_Error} = \frac{|T_{\text{exp}} - T_{\text{theo}}|}{T_{\text{theo}}}$$
-   *Mean Result:* $0.015243$ ($1.52\%$).
+3. **Relative Error** (`Relative_Error`):
+   $$E_{\text{rel}} = \frac{|T_{\text{exp}} - T_{\text{theo}}|}{T_{\text{theo}}}$$
+   - *Mean Result:* $0.015243$ ($1.52\%$).
 
-4. **Percentage Error ($\text{Percentage\_Error}$):**
-   $$\text{Percentage\_Error} = \text{Relative\_Error} \times 100\%$$
-   *Mean Result:* $1.5243\%$ (Median: $1.0119\%$, Min: $0.0298\%$, Max: $10.2896\%$).
+4. **Percentage Error** (`Percentage_Error`):
+   $$E_{\%} = E_{\text{rel}} \times 100\% = \left(\frac{|T_{\text{exp}} - T_{\text{theo}}|}{T_{\text{theo}}}\right) \times 100\%$$
+   - *Mean Result:* $1.5243\%$ (Median: $1.0119\%$, Min: $0.0298\%$, Max: $10.2896\%$).
 
 ### Error Classification Breakdown
 - **Low Error (< 1%):** 39 observations (**48.75%**) — Modal category, high precision.
@@ -163,18 +163,18 @@ Discrepancies were formulated using four standard mathematical equations:
 ### Descriptive Statistics Summary
 | Metric Variable | Mean | Median ($Q_2$) | Min | Max | Std Dev | Variance | $Q_1$ | $Q_3$ | IQR |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **`Experimental_Period_s`** | $1.4704\,\text{s}$ | $1.4952\,\text{s}$ | $0.8948\,\text{s}$ | $2.0485\,\text{s}$ | $0.3547\,\text{s}$ | $0.1258\,\text{s}^2$ | $1.2616\,\text{s}$ | $1.7250\,\text{s}$ | $0.4634\,\text{s}$ |
-| **`Absolute_Error_s`** | $0.0214\,\text{s}$ | $0.0152\,\text{s}$ | $0.0005\,\text{s}$ | $0.1727\,\text{s}$ | $0.0267\,\text{s}$ | $0.0007\,\text{s}^2$ | $0.0051\,\text{s}$ | $0.0260\,\text{s}$ | $0.0209\,\text{s}$ |
-| **`Percentage_Error`** | $1.5243\%$ | $1.0119\%$ | $0.0298\%$ | $10.2896\%$ | $1.7770\%$ | $3.1578\%^2$ | $0.4075\%$ | $1.8374\%$ | $1.4299\%$ |
+| **`Experimental_Period_s`** | 1.4704 s | 1.4952 s | 0.8948 s | 2.0485 s | 0.3547 s | 0.1258 s² | 1.2616 s | 1.7250 s | 0.4634 s |
+| **`Absolute_Error_s`** | 0.0214 s | 0.0152 s | 0.0005 s | 0.1727 s | 0.0267 s | 0.0007 s² | 0.0051 s | 0.0260 s | 0.0209 s |
+| **`Percentage_Error`** | 1.5243% | 1.0119% | 0.0298% | 10.2896% | 1.7770% | 3.1578%² | 0.4075% | 1.8374% | 1.4299% |
 
 ### Outlier Analysis (IQR Method)
 - **IQR Threshold:** $\text{Upper Bound} = Q_3 + 1.5 \times \text{IQR} = 3.9822\%$
 - **Identified Outliers ($n=5$, 6.25%):**
-  - `EXP004` ($L=0.20\,\text{m}$): $4.6260\%$ error ($+0.0415\,\text{s}$)
-  - `EXP007` ($L=0.20\,\text{m}$): $4.7709\%$ error ($+0.0428\,\text{s}$)
-  - `EXP014` ($L=0.30\,\text{m}$): $8.2727\%$ error ($+0.0909\,\text{s}$)
-  - `EXP038` ($L=0.50\,\text{m}$): $9.1717\%$ error ($-0.1301\,\text{s}$)
-  - `EXP055` ($L=0.70\,\text{m}$): $10.2896\%$ error ($+0.1727\,\text{s}$)
+  - `EXP004` ($L=0.20\text{ m}$): $4.6260\%$ error ($+0.0415\text{ s}$)
+  - `EXP007` ($L=0.20\text{ m}$): $4.7709\%$ error ($+0.0428\text{ s}$)
+  - `EXP014` ($L=0.30\text{ m}$): $8.2727\%$ error ($+0.0909\text{ s}$)
+  - `EXP038` ($L=0.50\text{ m}$): $9.1717\%$ error ($-0.1301\text{ s}$)
+  - `EXP055` ($L=0.70\text{ m}$): $10.2896\%$ error ($+0.1727\text{ s}$)
 - **Retention:** Flagged with `Outlier_Flag = True` and retained to preserve scientific transparency.
 
 ---
@@ -196,12 +196,12 @@ The project generates a complete suite of **7 publication-quality academic visua
 
 ## Key Findings
 1. **Strong Theoretical Conformance ($r = +0.992$):** Empirical oscillation periods strongly conform to the theoretical simple pendulum model $T = 2\pi\sqrt{L/g}$ ($r = +0.992$).
-2. **Human-Scale Timing Accuracy ($\text{MAE} = 0.0214\,\text{s}$):** The overall mean absolute timing error is $0.0214\,\text{s}$ ($21.4\,\text{ms}$), matching expected human stopwatch reaction latencies.
+2. **Human-Scale Timing Accuracy ($\text{MAE} = 0.0214\text{ s}$):** The overall mean absolute timing error is $0.0214\text{ s}$ ($21.4\text{ ms}$), matching expected human stopwatch reaction latencies.
 3. **Sub-2% Precision Majority ($77.50\%$):** Over three-quarters of all trials have $< 2.0\%$ error, with $48.75\%$ achieving $< 1.0\%$ error.
 4. **Length-Independent Error ($r = -0.123$):** Pearson correlation between length and percentage error is negligible ($r = -0.123$), proving error does not accumulate systematically with longer pendulums.
 5. **Effective Outlier Isolation ($6.25\%$ Rate):** IQR method cleanly isolated 5 statistical anomalies ($> 3.9822\%$) without data deletion.
 6. **Positively Skewed Residuals:** Over $60\%$ of observations exhibit $< 1.5\%$ error, proving that large discrepancies are rare events.
-7. **Best/Worst Length Groups:** $L = 0.80\,\text{m}$ achieved best precision ($0.91\%$); $L = 0.50\,\text{m}$ showed highest error ($2.10\%$, driven by outlier `EXP038`).
+7. **Best/Worst Length Groups:** $L = 0.80\text{ m}$ achieved best precision ($0.91\%$); $L = 0.50\text{ m}$ showed highest error ($2.10\%$, driven by outlier `EXP038`).
 
 ---
 
@@ -302,15 +302,15 @@ All analyses, figures, metrics, and tables are 100% reproducible. The dataset ge
 ## Results
 The experimental dataset `pendulum_experimental_data.csv` ($N = 80$ records across 8 distinct pendulum lengths) was successfully loaded, verified for data quality (0 missing values, 0 duplicate records, 100% physical validity), preprocessed, and classified into statistical taxonomies.
 
-All four standard error metrics (Signed Error, Absolute Error, Relative Error, and Percentage Error) were programmatically formulated, yielding an overall mean absolute error of **$0.0214\,\text{s}$** ($21.4\,\text{ms}$) and a mean percentage error of **$1.5243\%$**. Outlier detection via the Interquartile Range ($1.5 \times \text{IQR}$) method identified exactly **5 statistical anomalies** ($6.25\%$) which were retained with `Outlier_Flag = True`. Comprehensive descriptive statistics and length-wise group summaries were computed.
+All four standard error metrics (Signed Error, Absolute Error, Relative Error, and Percentage Error) were programmatically formulated, yielding an overall mean absolute error of **0.0214 s** (21.4 ms) and a mean percentage error of **1.5243%**. Outlier detection via the Interquartile Range ($1.5 \times \text{IQR}$) method identified exactly **5 statistical anomalies** (6.25%) which were retained with `Outlier_Flag = True`. Comprehensive descriptive statistics and length-wise group summaries were computed.
 
-A full suite of **seven publication-quality visualizations** (Line Chart, Bar Chart, Pie Chart, Box Plot, Scatter Plot, Histogram, and Correlation Heatmap) was successfully generated, confirming strong empirical conformance to theoretical pendulum physics ($r = +0.992$), scale-invariance of measurement errors ($r = -0.123$), and dominance of high-precision observations ($77.50\%$ with error $< 2.0\%$). All project objectives and college Data Exploration and Visualization lab record requirements have been completely fulfilled.
+A full suite of **seven publication-quality visualizations** (Line Chart, Bar Chart, Pie Chart, Box Plot, Scatter Plot, Histogram, and Correlation Heatmap) was successfully generated, confirming strong empirical conformance to theoretical pendulum physics ($r = +0.992$), scale-invariance of measurement errors ($r = -0.123$), and dominance of high-precision observations (77.50% with error $< 2.0\%$). All project objectives and college Data Exploration and Visualization lab record requirements have been completely fulfilled.
 
 ---
 
 ## Limitations
 1. **Simulated Nature of Dataset:** The dataset is a constructed educational dataset modeling pendulum physics with Gaussian timing noise rather than live benchtop hardware measurements.
-2. **Fixed Gravitational Assumption:** Standard acceleration due to gravity was treated as an exact constant ($g = 9.81\,\text{m/s}^2$) without local gravimetric or altitude adjustments.
+2. **Fixed Gravitational Assumption:** Standard acceleration due to gravity was treated as an exact constant ($g = 9.81\text{ m/s}^2$) without local gravimetric or altitude adjustments.
 3. **Project-Defined Thresholds:** Error categories (Low $< 1\%$, Moderate $1 - 2\%$, High $\ge 2\%$) represent analytical project tiers rather than standardized international metrological thresholds.
 4. **Linear Correlation Boundaries:** Pearson correlation coefficients evaluate linear association only and do not imply causal mechanisms.
 5. **Ideal Physics Scope:** Small-angle approximations ($\sin\theta \approx \theta$) were assumed throughout without incorporating non-linear damping decay or air resistance models.

@@ -3,7 +3,7 @@
 ## Project
 **Title:** Error Visualization and Analysis of Experimental Data Using Python  
 **Course:** Data Exploration and Visualization (Mini Project)  
-**Author:** Dinesh Moorthy ([DineshMoorthy007](https://github.com/DineshMoorthy007))  
+**Author:** Dinesh Moorthy S R ([DineshMoorthy007](https://github.com/DineshMoorthy007))  
 **Repository:** `error-visualization-experimental-data`  
 
 ---

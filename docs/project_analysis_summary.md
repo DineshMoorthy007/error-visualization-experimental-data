@@ -2,7 +2,7 @@
 
 **Project Title:** Error Visualization and Analysis of Experimental Data Using Python  
 **Course:** Data Exploration and Visualization (Mini Project)  
-**Author:** Dinesh Moorthy ([DineshMoorthy007](https://github.com/DineshMoorthy007))  
+**Author:** Dinesh Moorthy S R ([DineshMoorthy007](https://github.com/DineshMoorthy007))  
 **Repository:** [error-visualization-experimental-data](https://github.com/DineshMoorthy007/error-visualization-experimental-data)  
 **Academic Environment:** Python, Jupyter Notebook, Pandas, NumPy, Matplotlib, Seaborn, Git, GitHub  
 
@@ -37,7 +37,7 @@ Where:
 The project follows a rigorous 6-stage computational and statistical workflow:
 1. **Data Ingestion & Quality Audit:** Load raw experimental observations, verify structural dimensionality ($80 \times 5$), confirm absence of missing entries or duplicates, and enforce physical validity ($L > 0, T > 0$).
 2. **Data Preprocessing & Taxonomy:** Standardize numerical data types (float64, int64), preserve precision, maintain physical units ($\text{m}$ and $\text{s}$), and classify variables into independent, dependent, and reference taxonomies.
-3. **Error Metrics Formulation:** Programmatically compute signed algebraic Error ($\text{Error}_s$), Absolute Error ($\text{Absolute\_Error}_s$), Relative Error ($\text{Relative\_Error}$), and Percentage Error ($\text{Percentage\_Error}$).
+3. **Error Metrics Formulation:** Programmatically compute signed algebraic Error ($T_{\text{exp}} - T_{\text{theo}}$), Absolute Error, Relative Error, and Percentage Error.
 4. **Outlier Detection via IQR:** Apply the non-parametric Interquartile Range method ($1.5 \times \text{IQR}$) on percentage errors to flag statistical anomalies with `Outlier_Flag` while preserving all observations for empirical transparency.
 5. **Categorical Error Discretization & Statistical Aggregation:** Classify trials into project-defined analytical error quality tiers (Low, Moderate, High Error) and compute central tendency, dispersion, variance, standard deviation, quartiles, and length-wise group summaries.
 6. **Exploratory Visual Diagnostics:** Construct seven publication-quality visualizations using Matplotlib and Seaborn to communicate trends, distributions, error compositions, box spreads, scatter regressions, error frequencies, and bivariate Pearson correlations.
@@ -55,20 +55,20 @@ The project follows a rigorous 6-stage computational and statistical workflow:
 ## 5. Error Metrics & Formulations
 Discrepancies between empirical observations and theoretical predictions were quantified using four foundational metrics:
 
-1. **Signed Algebraic Error ($\text{Error}_s$):**
-   $$\text{Error}_s = T_{\text{exp}} - T_{\text{theo}}$$
+1. **Signed Algebraic Error** (`Error_s`):
+   $$E = T_{\text{exp}} - T_{\text{theo}}$$
    *Mean Result:* $+0.0069\text{ s}$ (Range: $-0.1301\text{ s}$ to $+0.1727\text{ s}$).
 
-2. **Absolute Error ($\text{Absolute\_Error}_s$):**
-   $$\text{Absolute\_Error}_s = |T_{\text{exp}} - T_{\text{theo}}|$$
+2. **Absolute Error** (`Absolute_Error_s`):
+   $$E_{\text{abs}} = |T_{\text{exp}} - T_{\text{theo}}|$$
    *Mean Result:* $0.0214\text{ s}$ ($\text{SD} = 0.0267\text{ s}$; Median = $0.0152\text{ s}$).
 
-3. **Relative Error ($\text{Relative\_Error}$):**
-   $$\text{Relative\_Error} = \frac{|T_{\text{exp}} - T_{\text{theo}}|}{T_{\text{theo}}}$$
+3. **Relative Error** (`Relative_Error`):
+   $$E_{\text{rel}} = \frac{|T_{\text{exp}} - T_{\text{theo}}|}{T_{\text{theo}}}$$
    *Mean Result:* $0.015243$ (Range: $0.000298$ to $0.102896$).
 
-4. **Percentage Error ($\text{Percentage\_Error}$):**
-   $$\text{Percentage\_Error} = \text{Relative\_Error} \times 100\%$$
+4. **Percentage Error** (`Percentage_Error`):
+   $$E_{\%} = E_{\text{rel}} \times 100\% = \left(\frac{|T_{\text{exp}} - T_{\text{theo}}|}{T_{\text{theo}}}\right) \times 100\%$$
    *Mean Result:* $1.5243\%$ ($\text{SD} = 1.7770\%$; Median = $1.0119\%$; Min = $0.0298\%$; Max = $10.2896\%$).
 
 ---
@@ -77,7 +77,7 @@ Discrepancies between empirical observations and theoretical predictions were qu
 
 ### Descriptive Statistics of Core Variables
 - **Experimental Period ($T_{\text{exp}}$):** Mean = $1.4704\text{ s}$, Median = $1.4952\text{ s}$, Std Dev = $0.3547\text{ s}$, Variance = $0.1258\text{ s}^2$, Range = $1.1537\text{ s}$ ($0.8948\text{ s}$ to $2.0485\text{ s}$), $Q_1 = 1.2616\text{ s}$, $Q_3 = 1.7250\text{ s}$.
-- **Percentage Error ($\text{Percentage\_Error}$):** Mean = $1.5243\%$, Median = $1.0119\%$, Std Dev = $1.7770\%$, Variance = $3.1578\%^2$, Range = $10.2598\%$ ($0.0298\%$ to $10.2896\%$), $Q_1 = 0.4075\%$, $Q_3 = 1.8374\%$, $\text{IQR} = 1.4299\%$.
+- **Percentage Error (`Percentage_Error`):** Mean = $1.5243\%$, Median = $1.0119\%$, Std Dev = $1.7770\%$, Variance = $3.1578\%^2$, Range = $10.2598\%$ ($0.0298\%$ to $10.2896\%$), $Q_1 = 0.4075\%$, $Q_3 = 1.8374\%$, $\text{IQR} = 1.4299\%$.
 
 ### Error Category Distribution (Project-Defined Tiers)
 - **Low Error (< 1.0%):** 39 observations (**48.75%** share) — Represents modal, high-precision laboratory measurements.
