@@ -7,12 +7,12 @@
 
 ---
 
-## Slide 1: Title Slide
-- **Title:** Error Visualization and Analysis of Experimental Data Using Python
+## Slide 1: Title
+- **Project Title:** Error Visualization and Analysis of Experimental Data Using Python
 - **Subtitle:** Computational Diagnostics, Statistical Modeling & Visual Exploration of Simple Pendulum Measurements
 - **Course:** Data Exploration and Visualization (Mini Project)
 - **Author:** Dinesh Moorthy (DineshMoorthy007)
-- **Tech Stack:** Python 3 | Pandas | NumPy | Matplotlib | Seaborn | Jupyter Notebook
+- **Tech Stack:** Python 3 | Pandas | NumPy | Matplotlib | Seaborn | Jupyter Notebook | GitHub
 
 ---
 
@@ -36,7 +36,7 @@
 
 ---
 
-## Slide 4: Dataset & Physical Model
+## Slide 4: Dataset
 - **Theoretical Pendulum Physics:**
   $$T = 2\pi \sqrt{\frac{L}{g}} \quad (g = 9.81\text{ m/s}^2)$$
 - **Scope & Dimensions:**
@@ -49,7 +49,16 @@
 
 ---
 
-## Slide 5: Analytical Methodology
+## Slide 5: Tools / Technologies
+- **Python 3:** Core programming language for scientific computing and statistical analysis.
+- **Pandas & NumPy:** Ingestion, data cleaning, mathematical array operations, and error metric formulation.
+- **Matplotlib & Seaborn:** Publication-quality visual diagnostics, custom figure themes, and high-resolution (300 DPI) rendering.
+- **Jupyter Notebook:** Interactive, self-documenting analytical notebook environment.
+- **Git & GitHub:** Version control, reproducible project structure, and public open-source hosting.
+
+---
+
+## Slide 6: Methodology
 - **Structured 6-Stage Pipeline:**
   1. **Data Ingestion & Integrity Check:** Verification of 0 missing values and physical domain constraints ($L > 0, T > 0$).
   2. **Preprocessing & Taxonomy:** Enforcing strict data types and preserving measurement units ($\text{m}$ and $\text{s}$).
@@ -60,9 +69,9 @@
 
 ---
 
-## Slide 6: Data Exploration & Preprocessing
+## Slide 7: Data Exploration and Preprocessing
 - **Data Completeness:** 100% complete dataset (0 missing values, 0 duplicate rows).
-- **Physical Validity:** 100% of length and time period readings are strictly positive.
+- **Physical Validity:** 100% of length and time period readings are strictly positive ($L > 0, T > 0$).
 - **Variable Classification:**
   - Controlled Independent Variable: `Length_m` ($0.20\text{ m} - 1.00\text{ m}$).
   - Measured Dependent Variable: `Experimental_Period_s` ($0.8948\text{ s} - 2.0485\text{ s}$).
@@ -71,7 +80,7 @@
 
 ---
 
-## Slide 7: Error Analysis & Outlier Detection
+## Slide 8: Error Analysis
 - **Quantitative Error Metrics:**
   - **Mean Absolute Error (MAE):** $0.0214\text{ s}$ ($21.4\text{ ms}$, consistent with human stopwatch reaction latency).
   - **Mean Percentage Error:** $1.5243\%$ (Median: $1.0119\%$).
@@ -87,30 +96,18 @@
 
 ---
 
-## Slide 8: Data Visualizations Overview (7 Academic Figures)
-- **Line Chart (14.1):** Mean experimental period vs theoretical physics curve with $\pm 1\,\text{SD}$ error bars.
-- **Bar Chart (14.2):** Mean percentage error across 8 lengths against the $1.52\%$ dataset average.
-- **Pie Chart (14.3):** Proportional distribution of Low (48.8%), Moderate (28.8%), and High (22.5%) error tiers.
-- **Box Plot (14.4):** Medians, spreads, IQRs, and flier outlier markers across length groups.
-- **Scatter Plot (14.5):** All 80 individual trials (75 inliers vs 5 outliers) against theoretical curve.
-- **Histogram & KDE (14.6):** Positively skewed percentage error distribution with mean/median markers.
-- **Correlation Heatmap (14.7):** Pearson correlation matrix across all 7 numerical attributes.
+## Slide 9: Visualizations
+- **Line Chart (16.1):** Mean experimental period vs theoretical physics curve with $\pm 1\,\text{SD}$ error bars.
+- **Bar Chart (16.2):** Mean percentage error across 8 lengths against the $1.52\%$ dataset average.
+- **Pie Chart (16.3):** Proportional distribution of Low (48.8%), Moderate (28.8%), and High (22.5%) error tiers.
+- **Box Plot (16.4):** Medians, spreads, IQRs, and flier outlier markers across length groups.
+- **Scatter Plot (16.5):** All 80 individual trials (75 inliers vs 5 outliers) against theoretical curve.
+- **Histogram & KDE (16.6):** Positively skewed percentage error distribution with mean/median markers.
+- **Correlation Heatmap (16.7):** Pearson correlation matrix across all 7 numerical attributes.
 
 ---
 
-## Slide 9: Key Analysis & Insights
-- **Model Conformance:** Experimental period tightly tracks theoretical predictions ($r = +0.992$), confirming $T \propto \sqrt{L}$.
-- **Scale Invariance:** Correlation between length and percentage error is negligible ($r = -0.123$), proving error does not accumulate systematically at longer lengths.
-- **Error Distribution Skewness:** Mean error ($1.52\%$) exceeds median ($1.01\%$) due to a small right-tail minority ($n=5$ outliers).
-- **Length Extremes:**
-  - Highest mean percentage error: $L = 0.50\text{ m}$ ($2.10\%$, affected by outlier `EXP038`).
-  - Lowest mean percentage error: $L = 0.80\text{ m}$ ($0.91\%$, highly consistent).
-  - Greatest variability: $L = 0.70\text{ m}$ ($\text{SD} = 0.0533\text{ s}$).
-  - Lowest variability: $L = 0.20\text{ m}$ ($\text{SD} = 0.0159\text{ s}$).
-
----
-
-## Slide 10: Important Findings
+## Slide 10: Analysis and Key Findings
 1. **Strong Theoretical Conformance:** Experimental data confirms $T = 2\pi\sqrt{L/g}$ ($r = +0.992$).
 2. **High Measurement Accuracy:** Mean absolute error of $0.0214\text{ s}$ reflects typical human reaction time.
 3. **Sub-2% Precision Majority:** $77.50\%$ of all experimental trials achieve $< 2.0\%$ error.
@@ -121,7 +118,7 @@
 
 ---
 
-## Slide 11: SDG Mapping — SDG 4: Quality Education
+## Slide 11: SDG Mapping
 - **Goal:** United Nations Sustainable Development Goal 4 (Quality Education).
 - **Target Focus:** Targets 4.4 & 4.7 (Technical STEM skills & data-driven scientific literacy).
 - **Educational Value Delivered:**
@@ -132,7 +129,7 @@
 
 ---
 
-## Slide 12: Conclusion & Future Scope
+## Slide 12: Conclusion and Future Scope
 - **Conclusion:**
   - Successfully quantified and visualized measurement discrepancies across 80 pendulum trials.
   - Demonstrated that experimental discrepancies stem from stochastic human stopwatch reaction time ($21.4\text{ ms}$) rather than physical model failure.
