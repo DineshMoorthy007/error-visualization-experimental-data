@@ -4,222 +4,294 @@ Data Preprocessing and Validation Module
 Project: Error Visualization and Analysis of Experimental Data Using Python
 Course: Data Exploration and Visualization
 
-This module handles dataset loading, reproducible experimental dataset generation,
-and comprehensive integrity validation for simple pendulum measurements.
+This module handles robust dataset loading, structural inspection, quality validation,
+variable taxonomy identification, and standardized data preprocessing.
 """
 
 import os
-import math
+from typing import Dict, Any, Tuple, Optional
 import numpy as np
 import pandas as pd
 
 
-def calculate_theoretical_period(length_m: float, g: float = 9.81) -> float:
+def get_default_dataset_path(filename: str = "pendulum_experimental_data.csv") -> str:
     """
-    Calculates theoretical period of a simple pendulum: T = 2 * pi * sqrt(L / g)
+    Resolves the absolute path to a file in the data directory,
+    ensuring cross-environment path stability whether executed from project root,
+    notebooks directory, or src directory.
 
     Parameters:
-        length_m (float): Pendulum length in meters.
-        g (float): Acceleration due to gravity in m/s^2 (default: 9.81).
+        filename (str): Name of the CSV file.
 
     Returns:
-        float: Theoretical period in seconds.
+        str: Absolute path to the data file.
     """
-    if length_m <= 0:
-        raise ValueError("Pendulum length must be strictly positive.")
-    return 2.0 * math.pi * math.sqrt(length_m / g)
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.abspath(os.path.join(current_dir, ".."))
+    return os.path.join(project_root, "data", filename)
 
 
-def generate_pendulum_dataset(
-    output_path: str = "data/pendulum_experimental_data.csv",
-    random_state: int = 42
-) -> pd.DataFrame:
+def load_dataset(filepath: Optional[str] = None) -> pd.DataFrame:
     """
-    Generates a scientifically plausible, reproducible experimental dataset
-    for a simple pendulum experiment across multiple lengths and trials.
+    Loads experimental dataset from a CSV file with robust relative and absolute path resolution.
 
     Parameters:
-        output_path (str): Destination path for CSV export.
-        random_state (int): Seed for NumPy random number generator.
-
-    Returns:
-        pd.DataFrame: Generated dataset containing raw experimental observations.
-    """
-    np.random.seed(random_state)
-
-    lengths = [0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 1.00]
-    trials_per_length = 10
-    records = []
-
-    exp_counter = 1
-    for length in lengths:
-        t_theo = calculate_theoretical_period(length)
-
-        for trial in range(1, trials_per_length + 1):
-            exp_id = f"EXP{exp_counter:03d}"
-
-            # Base realistic measurement variation (human reaction time + slight stopwatch jitter)
-            # Standard deviation ~ 0.022s with a subtle positive reaction lag of +0.008s
-            random_noise = np.random.normal(loc=0.008, scale=0.022)
-
-            # Introduce controlled realistic outlier perturbations on specific trials
-            # to enable meaningful outlier detection in Phase 2
-            outlier_shift = 0.0
-            if exp_counter == 14:   # Length 0.30m, Trial 4: human reaction delay
-                outlier_shift = 0.125
-            elif exp_counter == 38: # Length 0.50m, Trial 8: premature stopwatch press
-                outlier_shift = -0.095
-            elif exp_counter == 55: # Length 0.70m, Trial 5: slight swing amplitude disturbance
-                outlier_shift = 0.142
-            elif exp_counter == 72: # Length 1.00m, Trial 2: timing error
-                outlier_shift = -0.118
-
-            t_exp = t_theo + random_noise + outlier_shift
-
-            # Ensure all values remain strictly positive and realistic
-            t_exp = max(t_exp, 0.1)
-
-            records.append({
-                "Experiment_ID": exp_id,
-                "Trial_Number": trial,
-                "Length_m": round(length, 2),
-                "Theoretical_Period_s": round(t_theo, 4),
-                "Experimental_Period_s": round(t_exp, 4)
-            })
-
-            exp_counter += 1
-
-    df = pd.DataFrame(records)
-
-    # Ensure output directory exists
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    df.to_csv(output_path, index=False)
-    print(f"[+] Dataset successfully generated and saved to: {output_path}")
-    return df
-
-
-def load_dataset(filepath: str = "data/pendulum_experimental_data.csv") -> pd.DataFrame:
-    """
-    Loads experimental dataset from a CSV file.
-
-    Parameters:
-        filepath (str): Path to CSV file.
+        filepath (str, optional): Path to CSV file. Defaults to standard raw data path.
 
     Returns:
         pd.DataFrame: Loaded dataset.
     """
+    if filepath is None:
+        filepath = get_default_dataset_path("pendulum_experimental_data.csv")
+    elif not os.path.isabs(filepath) and not os.path.exists(filepath):
+        # Check relative to project root
+        candidate = get_default_dataset_path(os.path.basename(filepath))
+        if os.path.exists(candidate):
+            filepath = candidate
+
     if not os.path.exists(filepath):
-        raise FileNotFoundError(f"Dataset file not found at: {filepath}")
-    return pd.read_csv(filepath)
+        raise FileNotFoundError(f"Dataset file not found at resolved path: {filepath}")
+
+    df = pd.read_csv(filepath)
+    return df
 
 
-def validate_dataset(df: pd.DataFrame) -> dict:
+def inspect_dataset(df: pd.DataFrame) -> Dict[str, Any]:
     """
-    Performs comprehensive structural and statistical integrity validation on the dataset.
-
-    Validation Checks:
-    1. Total record count
-    2. Total attribute count
-    3. Required column presence
-    4. Data types
-    5. Missing values
-    6. Duplicate records
-    7. Positive value validation (Length_m > 0, Theoretical_Period_s > 0, Experimental_Period_s > 0)
-    8. Minimum and maximum ranges
-    9. Descriptive statistics
+    Extracts fundamental structural metadata from the dataset.
 
     Parameters:
-        df (pd.DataFrame): Dataset to validate.
+        df (pd.DataFrame): Dataset to inspect.
 
     Returns:
-        dict: Validation results and summary metrics.
+        dict: Structural summary containing shape, columns, dtypes, and head/tail records.
     """
-    expected_columns = [
-        "Experiment_ID",
-        "Trial_Number",
-        "Length_m",
-        "Theoretical_Period_s",
-        "Experimental_Period_s"
-    ]
-
-    total_records = len(df)
-    total_attributes = len(df.columns)
-    missing_values = int(df.isnull().sum().sum())
-    duplicate_records = int(df.duplicated().sum())
-
-    missing_cols = [col for col in expected_columns if col not in df.columns]
-    has_expected_cols = len(missing_cols) == 0
-
-    all_lengths_positive = bool((df["Length_m"] > 0).all()) if "Length_m" in df.columns else False
-    all_theo_positive = bool((df["Theoretical_Period_s"] > 0).all()) if "Theoretical_Period_s" in df.columns else False
-    all_exp_positive = bool((df["Experimental_Period_s"] > 0).all()) if "Experimental_Period_s" in df.columns else False
-
-    validation_passed = (
-        total_records > 0
-        and has_expected_cols
-        and missing_values == 0
-        and duplicate_records == 0
-        and all_lengths_positive
-        and all_theo_positive
-        and all_exp_positive
-    )
-
-    results = {
-        "validation_passed": validation_passed,
-        "total_records": total_records,
-        "total_attributes": total_attributes,
-        "columns": list(df.columns),
-        "dtypes": {col: str(dtype) for col, dtype in df.dtypes.items()},
-        "missing_values_per_col": df.isnull().sum().to_dict(),
-        "total_missing_values": missing_values,
-        "duplicate_records": duplicate_records,
-        "lengths_positive": all_lengths_positive,
-        "theoretical_periods_positive": all_theo_positive,
-        "experimental_periods_positive": all_exp_positive,
-        "length_range": (float(df["Length_m"].min()), float(df["Length_m"].max())),
-        "theoretical_period_range": (float(df["Theoretical_Period_s"].min()), float(df["Theoretical_Period_s"].max())),
-        "experimental_period_range": (float(df["Experimental_Period_s"].min()), float(df["Experimental_Period_s"].max())),
-        "unique_lengths": sorted(df["Length_m"].unique().tolist())
+    return {
+        "shape": df.shape,
+        "rows": df.shape[0],
+        "columns": df.shape[1],
+        "column_names": list(df.columns),
+        "dtypes": df.dtypes.to_dict(),
+        "first_5_records": df.head(5),
+        "last_5_records": df.tail(5)
     }
 
-    return results
+
+def check_missing_values(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Performs comprehensive missing value inspection across all columns.
+
+    Parameters:
+        df (pd.DataFrame): Target dataframe.
+
+    Returns:
+        pd.DataFrame: Tabular summary of missing count and percentage per column.
+    """
+    missing_counts = df.isnull().sum()
+    missing_pct = (missing_counts / len(df)) * 100.0
+    
+    summary_df = pd.DataFrame({
+        "Attribute": df.columns,
+        "Missing_Count": missing_counts.values,
+        "Missing_Percentage": missing_pct.values
+    })
+    return summary_df
 
 
-def print_validation_report(results: dict, df: pd.DataFrame) -> None:
+def check_duplicates(df: pd.DataFrame) -> int:
     """
-    Prints a formatted, readable validation report to the console.
+    Identifies duplicate records in the dataset.
+
+    Parameters:
+        df (pd.DataFrame): Target dataframe.
+
+    Returns:
+        int: Number of duplicate rows.
     """
-    print("\n" + "=" * 65)
-    print("      EXPERIMENTAL DATASET VALIDATION REPORT - PHASE 1")
-    print("=" * 65)
-    status_str = "PASSED [SUCCESS]" if results["validation_passed"] else "FAILED [ERROR]"
-    print(f"Overall Status: {status_str}\n")
-    print(f"1. Total Records (Rows)      : {results['total_records']}")
-    print(f"2. Total Attributes (Cols)   : {results['total_attributes']}")
-    print(f"3. Column Names              : {', '.join(results['columns'])}")
-    print(f"4. Missing Values (Total)    : {results['total_missing_values']}")
-    print(f"5. Duplicate Records         : {results['duplicate_records']}")
-    print(f"6. Unique Pendulum Lengths   : {results['unique_lengths']}")
-    print(f"7. Length_m Range            : [{results['length_range'][0]:.2f}, {results['length_range'][1]:.2f}] m (All Positive: {results['lengths_positive']})")
-    print(f"8. Theoretical Period Range  : [{results['theoretical_period_range'][0]:.4f}, {results['theoretical_period_range'][1]:.4f}] s (All Positive: {results['theoretical_periods_positive']})")
-    print(f"9. Experimental Period Range : [{results['experimental_period_range'][0]:.4f}, {results['experimental_period_range'][1]:.4f}] s (All Positive: {results['experimental_periods_positive']})")
-    print("\nAttribute Data Types:")
-    for col, dtype in results["dtypes"].items():
-        print(f"   - {col:25s}: {dtype}")
-    print("\nDescriptive Statistical Summary:")
-    print("-" * 65)
-    print(df.describe().to_string())
-    print("=" * 65 + "\n")
+    return int(df.duplicated().sum())
+
+
+def validate_measurements(df: pd.DataFrame) -> Dict[str, Any]:
+    """
+    Validates physical feasibility and domain integrity constraints:
+    - Length_m > 0
+    - Theoretical_Period_s > 0
+    - Experimental_Period_s > 0
+    - No negative or null values in physical dimensions
+
+    Parameters:
+        df (pd.DataFrame): Target dataframe.
+
+    Returns:
+        dict: Validation status flags and invalid record inventories.
+    """
+    invalid_lengths = df[df["Length_m"] <= 0] if "Length_m" in df.columns else pd.DataFrame()
+    invalid_theo = df[df["Theoretical_Period_s"] <= 0] if "Theoretical_Period_s" in df.columns else pd.DataFrame()
+    invalid_exp = df[df["Experimental_Period_s"] <= 0] if "Experimental_Period_s" in df.columns else pd.DataFrame()
+
+    all_valid = (len(invalid_lengths) == 0) and (len(invalid_theo) == 0) and (len(invalid_exp) == 0)
+
+    return {
+        "all_physically_valid": all_valid,
+        "invalid_length_count": len(invalid_lengths),
+        "invalid_theo_count": len(invalid_theo),
+        "invalid_exp_count": len(invalid_exp),
+        "invalid_records_summary": {
+            "Length_m": invalid_lengths["Experiment_ID"].tolist() if not invalid_lengths.empty else [],
+            "Theoretical_Period_s": invalid_theo["Experiment_ID"].tolist() if not invalid_theo.empty else [],
+            "Experimental_Period_s": invalid_exp["Experiment_ID"].tolist() if not invalid_exp.empty else []
+        }
+    }
+
+
+def classify_variables(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Generates a structured taxonomy classifying all variables into numerical
+    (discrete/continuous) or categorical types, along with academic rationale.
+
+    Parameters:
+        df (pd.DataFrame): Target dataframe.
+
+    Returns:
+        pd.DataFrame: Classification table.
+    """
+    classifications = []
+    
+    for col in df.columns:
+        dtype = str(df[col].dtype)
+        if col == "Experiment_ID":
+            var_type = "Identifier (Nominal / Alphanumeric)"
+            nature = "Unique observation key"
+            rationale = "Alphanumeric string used solely to uniquely identify individual experimental trials."
+        elif col == "Trial_Number":
+            var_type = "Numerical (Discrete Integer)"
+            nature = "Ordinal / Trial Index"
+            rationale = "Count of repeated trials (1 to 10) performed for each length configuration."
+        elif col == "Length_m":
+            var_type = "Numerical (Continuous Float)"
+            nature = "Independent Variable"
+            rationale = "Physical pendulum length measured in metres; continuous physical dimension."
+        elif col == "Theoretical_Period_s":
+            var_type = "Numerical (Continuous Float)"
+            nature = "Theoretical Reference"
+            rationale = "Deterministic theoretical time period calculated from pendulum physics formula."
+        elif col == "Experimental_Period_s":
+            var_type = "Numerical (Continuous Float)"
+            nature = "Dependent Measured Variable"
+            rationale = "Empirical stopwatch timing measurements subject to real-world experimental variations."
+        elif col == "Error_s":
+            var_type = "Numerical (Continuous Float)"
+            nature = "Derived Measurement"
+            rationale = "Signed algebraic error (Experimental - Theoretical) in seconds."
+        elif col == "Absolute_Error_s":
+            var_type = "Numerical (Continuous Float)"
+            nature = "Derived Measurement"
+            rationale = "Magnitude of measurement error in seconds."
+        elif col == "Relative_Error":
+            var_type = "Numerical (Continuous Float)"
+            nature = "Derived Metric"
+            rationale = "Dimensionless ratio of absolute error relative to theoretical reference."
+        elif col == "Percentage_Error":
+            var_type = "Numerical (Continuous Float)"
+            nature = "Derived Metric"
+            rationale = "Scaled relative error expressed as a percentage (%)."
+        elif col == "Error_Category":
+            var_type = "Categorical (Ordinal String)"
+            nature = "Derived Grouping"
+            rationale = "Discretized error quality tiers: Low (<1%), Moderate (1-2%), High (>=2%)."
+        elif col == "Outlier_Flag":
+            var_type = "Categorical (Boolean Flag)"
+            nature = "Diagnostic Attribute"
+            rationale = "Binary indicator denoting whether the observation is an IQR-based statistical outlier."
+        else:
+            var_type = f"General ({dtype})"
+            nature = "Generic Variable"
+            rationale = "Dataset attribute."
+
+        classifications.append({
+            "Attribute": col,
+            "Data_Type": dtype,
+            "Variable_Classification": var_type,
+            "Measurement_Nature": nature,
+            "Academic_Rationale": rationale
+        })
+
+    return pd.DataFrame(classifications)
+
+
+def preprocess_data(df: pd.DataFrame) -> Tuple[pd.DataFrame, Dict[str, Any]]:
+    """
+    Executes standard data preprocessing operations:
+    1. Validates absence of nulls and duplicates
+    2. Verifies physical positivity ($L > 0, T > 0$)
+    3. Confirms explicit numeric type casting
+    4. Rounds numerical dimensions to standard laboratory precision without
+       distorting physical units (metres and seconds).
+
+    Parameters:
+        df (pd.DataFrame): Raw experimental dataset.
+
+    Returns:
+        tuple: (preprocessed_df, preprocessing_log_dict)
+    """
+    df_clean = df.copy()
+
+    # Verify column existence
+    expected_cols = ["Experiment_ID", "Trial_Number", "Length_m", "Theoretical_Period_s", "Experimental_Period_s"]
+    for col in expected_cols:
+        if col not in df_clean.columns:
+            raise KeyError(f"Expected column '{col}' is missing from raw dataset.")
+
+    # Explicit data type enforcement
+    df_clean["Experiment_ID"] = df_clean["Experiment_ID"].astype(str)
+    df_clean["Trial_Number"] = pd.to_numeric(df_clean["Trial_Number"], errors="coerce").astype(int)
+    df_clean["Length_m"] = pd.to_numeric(df_clean["Length_m"], errors="coerce").astype(float)
+    df_clean["Theoretical_Period_s"] = pd.to_numeric(df_clean["Theoretical_Period_s"], errors="coerce").astype(float)
+    df_clean["Experimental_Period_s"] = pd.to_numeric(df_clean["Experimental_Period_s"], errors="coerce").astype(float)
+
+    # Standardize precision: length to 2 decimals, periods to 4 decimals
+    df_clean["Length_m"] = df_clean["Length_m"].round(2)
+    df_clean["Theoretical_Period_s"] = df_clean["Theoretical_Period_s"].round(4)
+    df_clean["Experimental_Period_s"] = df_clean["Experimental_Period_s"].round(4)
+
+    # Preprocessing log
+    log = {
+        "initial_record_count": len(df),
+        "final_record_count": len(df_clean),
+        "missing_values_handled": int(df.isnull().sum().sum()),
+        "duplicates_handled": int(df.duplicated().sum()),
+        "type_conversions": {col: str(df_clean[col].dtype) for col in expected_cols},
+        "precision_standardized": {
+            "Length_m": "2 decimal places",
+            "Theoretical_Period_s": "4 decimal places",
+            "Experimental_Period_s": "4 decimal places"
+        },
+        "normalization_applied": False,
+        "normalization_note": "Original physical units (metres and seconds) preserved for direct physical interpretability."
+    }
+
+    return df_clean, log
 
 
 if __name__ == "__main__":
-    csv_file = os.path.join(os.path.dirname(__file__), "..", "data", "pendulum_experimental_data.csv")
-    csv_file = os.path.abspath(csv_file)
-
-    # Generate dataset
-    df_generated = generate_pendulum_dataset(csv_file, random_state=42)
-
-    # Validate dataset
-    df_loaded = load_dataset(csv_file)
-    val_results = validate_dataset(df_loaded)
-    print_validation_report(val_results, df_loaded)
+    raw_path = get_default_dataset_path("pendulum_experimental_data.csv")
+    print(f"Loading dataset from: {raw_path}")
+    raw_df = load_dataset(raw_path)
+    
+    print("\n--- Data Exploration ---")
+    insp = inspect_dataset(raw_df)
+    print(f"Dataset Shape: {insp['shape']}")
+    print(f"Columns: {insp['column_names']}")
+    
+    print("\n--- Missing Values & Duplicates ---")
+    print(check_missing_values(raw_df).to_string(index=False))
+    print(f"Duplicate count: {check_duplicates(raw_df)}")
+    
+    print("\n--- Measurement Physical Validation ---")
+    val = validate_measurements(raw_df)
+    print(f"All physically valid: {val['all_physically_valid']}")
+    
+    print("\n--- Preprocessing Execution ---")
+    clean_df, prep_log = preprocess_data(raw_df)
+    print(f"Clean records: {len(clean_df)}")
+    print("Preprocessing Log:", prep_log)

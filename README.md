@@ -3,14 +3,14 @@
 **Course:** Data Exploration and Visualization (Mini Project)  
 **Author / GitHub:** [DineshMoorthy007](https://github.com/DineshMoorthy007)  
 **Repository:** [error-visualization-experimental-data](https://github.com/DineshMoorthy007/error-visualization-experimental-data)  
-**Current Status:** Phase 1 Completed (Foundation, Dataset Construction & Validation)
+**Current Status:** Phase 2 Completed (Data Exploration, Preprocessing, Outlier Detection & Error Analysis)
 
 ---
 
 ## 1. Project Overview
 In physical and engineering sciences, experimental measurements are inherently subject to experimental uncertainties, environmental disturbances, instrumental limits, and human timing errors. This mini project investigates measurement discrepancies by analyzing experimental data from a **Simple Pendulum Experiment**.
 
-Using Python and data visualization techniques, this project explores experimental observations, calculates discrepancy metrics (Absolute Error, Relative Error, and Percentage Error), identifies statistical outliers, and visualizes error trends across varying physical dimensions.
+Using Python and data exploration techniques, this project explores experimental observations, calculates discrepancy metrics (Error, Absolute Error, Relative Error, and Percentage Error), identifies statistical outliers using the Interquartile Range (IQR) method, evaluates descriptive statistical properties, and builds a solid foundation for publication-quality visual diagnostics in Phase 3.
 
 ---
 
@@ -25,17 +25,20 @@ Without structured error visualization and statistical exploration, students and
 ---
 
 ## 3. Aim
-To explore, validate, and visualize experimental measurement data from a simple pendulum system using Python, evaluating experimental time period variations against theoretical physics models, performing descriptive statistical error analysis, and building an end-to-end exploratory pipeline for experimental data verification.
+To explore, preprocess, validate, and analyze experimental measurement data from a simple pendulum system using Python, evaluating empirical time period variations against theoretical physics models, quantifying measurement error metrics, detecting statistical anomalies, and preparing structured statistical summaries for graphical visualization.
 
 ---
 
 ## 4. Objectives
-1. **Design and Construct Dataset:** Formulate a scientifically plausible, reproducible experimental dataset covering 8 distinct pendulum lengths with 10 repeated measurement trials each ($N = 80$).
-2. **Data Exploration & Preprocessing:** Conduct foundational data sanity checks, missing value assessments, duplicate record inspections, and data type verifications.
-3. **Error Modeling & Metrics Formulation (Phase 2):** Compute Absolute Error ($|T_{\text{exp}} - T_{\text{theo}}|$), Relative Error, and Percentage Error across all trials.
-4. **Descriptive Statistical Analysis (Phase 2):** Calculate central tendency, dispersion (mean, standard deviation, variance), and interquartile ranges per length group.
-5. **Outlier Detection (Phase 2):** Identify anomalies and extreme errors using Interquartile Range (IQR) and Z-score criteria.
-6. **Exploratory Data Visualization (Phase 2):** Produce publication-quality plots (scatter comparison, error distributions, group boxplots, and residual charts).
+1. **Dataset Ingestion & Exploration:** Load and inspect experimental measurements covering 8 distinct pendulum lengths with 10 repeated trials ($N = 80$).
+2. **Data Quality Verification:** Verify dataset completeness, absence of duplicates, and physical validity ($L > 0, T_{\text{theo}} > 0, T_{\text{exp}} > 0$).
+3. **Data Preprocessing:** Standardize numeric types and precision while preserving original measurement units (metres and seconds).
+4. **Error Metrics Formulation:** Calculate algebraic Error ($T_{\text{exp}} - T_{\text{theo}}$), Absolute Error, Relative Error, and Percentage Error.
+5. **Outlier Detection:** Isolate experimental anomalies using the Interquartile Range (IQR) method on measurement errors and flag them without data deletion.
+6. **Error Classification:** Categorize experimental trials into project-defined analytical error quality tiers (Low, Moderate, High Error).
+7. **Descriptive Statistical Analysis:** Compute central tendency, dispersion, variance, standard deviation, and quartiles.
+8. **Length-wise Group Aggregation:** Generate aggregated statistical summaries across all 8 pendulum length configurations.
+9. **Exploratory Data Visualization (Phase 3):** Produce multi-chart diagnostic visual figures.
 
 ---
 
@@ -64,51 +67,91 @@ The dataset was synthetically generated for educational and analytical purposes 
 
 ## 7. Dataset Size
 - **Total Records (Observations):** 80 rows
-- **Total Attributes (Variables):** 5 columns
+- **Raw Attributes (Variables):** 5 columns
+- **Processed Attributes:** 11 columns (including error metrics, categories, and outlier flags)
 - **Number of Length Groups:** 8 unique lengths ($0.20\,\text{m}, 0.30\,\text{m}, 0.40\,\text{m}, 0.50\,\text{m}, 0.60\,\text{m}, 0.70\,\text{m}, 0.80\,\text{m}, 1.00\,\text{m}$)
 - **Trials per Length:** 10 trials
-- **File Format:** CSV (`data/pendulum_experimental_data.csv`)
+- **Raw Data Path:** `data/pendulum_experimental_data.csv`
+- **Processed Data Path:** `data/processed/pendulum_processed_data.csv`
 
 ---
 
 ## 8. Attributes
-| Attribute Name | Data Type | Description | Unit / Format |
+| Attribute Name | Data Type | Description | Role / Format |
 | :--- | :--- | :--- | :--- |
-| `Experiment_ID` | String / Object | Unique observation identifier | `EXP001` - `EXP080` |
-| `Trial_Number` | Integer | Repetition trial index for a given length | $1 - 10$ |
-| `Length_m` | Float | Measured length of the pendulum | Metres ($\text{m}$) |
-| `Theoretical_Period_s` | Float | Theoretical period from $T = 2\pi\sqrt{L/g}$ | Seconds ($\text{s}$) |
-| `Experimental_Period_s` | Float | Recorded experimental oscillation period | Seconds ($\text{s}$) |
-
-*Note: In accordance with Phase 1 design guidelines, calculated error columns (`Absolute_Error`, `Relative_Error`, `Percentage_Error`) are excluded from raw data and computed in Phase 2.*
+| `Experiment_ID` | String / Object | Unique observation identifier | Nominal (`EXP001` - `EXP080`) |
+| `Trial_Number` | Integer | Repetition trial index for a given length | Discrete Numerical ($1 - 10$) |
+| `Length_m` | Float | Measured length of the pendulum | Continuous Numerical (metres) |
+| `Theoretical_Period_s` | Float | Theoretical period from $T = 2\pi\sqrt{L/g}$ | Continuous Numerical (seconds) |
+| `Experimental_Period_s` | Float | Recorded experimental oscillation period | Continuous Numerical (seconds) |
+| `Error_s` | Float | Signed error ($T_{\text{exp}} - T_{\text{theo}}$) | Derived Measurement (seconds) |
+| `Absolute_Error_s` | Float | Magnitude of error ($|T_{\text{exp}} - T_{\text{theo}}|$) | Derived Measurement (seconds) |
+| `Relative_Error` | Float | Dimensionless ratio ($\text{Absolute Error} / T_{\text{theo}}$) | Derived Dimensionless Metric |
+| `Percentage_Error` | Float | Scaled percentage error ($\text{Relative Error} \times 100$) | Derived Percentage Metric (%) |
+| `Error_Category` | String | Analytical error tier (Low, Moderate, High) | Ordinal Categorical Grouping |
+| `Outlier_Flag` | Boolean | Statistical outlier indicator via IQR | Binary Flag (`True` / `False`) |
 
 ---
 
-## 9. Technologies Used
+## 9. Error Metrics Formulation
+The project computes four core error metrics to analyze experimental discrepancies:
+
+1. **Signed Error ($\text{Error}_s$):**
+   $$\text{Error}_s = T_{\text{exp}} - T_{\text{theo}}$$
+   Quantifies directionality and timing bias (e.g., positive value indicates delayed stopwatch press).
+
+2. **Absolute Error ($\text{Absolute\_Error}_s$):**
+   $$\text{Absolute\_Error}_s = |T_{\text{exp}} - T_{\text{theo}}|$$
+   Quantifies the absolute magnitude of deviation in physical time units (seconds).
+
+3. **Relative Error ($\text{Relative\_Error}$):**
+   $$\text{Relative\_Error} = \frac{\text{Absolute\_Error}_s}{T_{\text{theo}}}$$
+   Measures error proportional to the physical magnitude of the theoretical period.
+
+4. **Percentage Error ($\text{Percentage\_Error}$):**
+   $$\text{Percentage\_Error} = \text{Relative\_Error} \times 100\%$$
+   Normalizes the error across all pendulum lengths for uniform comparative analysis.
+
+---
+
+## 10. Data Preprocessing & Quality Assurance
+The preprocessing pipeline applies explicit verification rules:
+- **Completeness Check:** Confirmed 0 missing/null values across all columns.
+- **Duplicate Check:** Confirmed 0 duplicate rows across all 80 observations.
+- **Physical Validity:** Confirmed all $L > 0$, $T_{\text{theo}} > 0$, and $T_{\text{exp}} > 0$.
+- **Precision Standardization:** Formatted lengths to 2 decimal places and time periods to 4 decimal places.
+- **Preservation of Units:** Retained original SI units (metres and seconds) without artificial scaling to preserve direct physical meaning.
+- **Outlier Retention:** Flagged 5 IQR statistical outliers without deletion to maintain experimental integrity.
+
+---
+
+## 11. Technologies Used
 - **Python (>= 3.10):** Core programming language
-- **Pandas (>= 2.0.0):** Data manipulation, loading, tabular exploration, and aggregation
-- **NumPy (>= 1.24.0):** Numerical computation and controlled random data synthesis
-- **Matplotlib (>= 3.7.0):** Base charting and visualization engine
-- **Seaborn (>= 0.12.0):** Statistical plots and visual theme management
+- **Pandas (>= 2.0.0):** Tabular data manipulation, aggregation, and statistical summarization
+- **NumPy (>= 1.24.0):** Numerical computation and vectorized error formulas
+- **Matplotlib (>= 3.7.0):** Foundation visualization engine
+- **Seaborn (>= 0.12.0):** Statistical plotting and visual aesthetic management
 - **Jupyter Notebook (>= 1.0.0):** Interactive exploratory analysis and documentation
 - **Git & GitHub:** Version control, collaborative tracking, and project repository hosting
 
 ---
 
-## 10. Project Structure
+## 12. Project Structure
 ```
 error-visualization-experimental-data/
 │
 ├── data/
-│   └── pendulum_experimental_data.csv       # Raw experimental dataset (80 records)
+│   ├── pendulum_experimental_data.csv       # Raw experimental dataset (80 records)
+│   └── processed/
+│       └── pendulum_processed_data.csv      # Enriched processed dataset (80 records, 11 attributes)
 │
 ├── notebooks/
-│   └── error_visualization.ipynb            # Jupyter Notebook with Phase 1 foundation
+│   └── error_visualization.ipynb            # Jupyter Notebook with Phase 1 & 2 analysis
 │
 ├── src/
-│   ├── data_preprocessing.py                # Dataset generator, loader & validation script
-│   ├── error_analysis.py                    # Error calculation & statistical metric functions
-│   └── visualization.py                     # Plotting routines & visualization helpers
+│   ├── data_preprocessing.py                # Dataset loader, exploration & validation routines
+│   ├── error_analysis.py                    # Error calculation, classification & statistics
+│   └── visualization.py                     # Plotting routines (for Phase 3)
 │
 ├── visualizations/                          # Output directory for exported figures
 │
@@ -122,44 +165,72 @@ error-visualization-experimental-data/
 
 ---
 
-## 11. Methodology
-1. **Dataset Synthesis & Parameterization:** Define physical lengths and calculate exact theoretical periods.
-2. **Stochastic Variation Modeling:** Inject realistic normal measurement noise and controlled perturbation points.
-3. **Data Quality Validation:** Execute automated tests checking dimensions, completeness, types, and physical validity (all $L > 0, T > 0$).
-4. **Exploratory Inspection:** Load dataset into Jupyter Notebook and inspect tabular summaries, missing values, and distributions.
-5. **Phase 2 Pipeline (Upcoming):** Compute error variables, group statistics, run IQR outlier filters, and generate diagnostic charts.
+## 13. Methodology
+```
+[ Raw Dataset Ingestion ]
+          │
+          ▼
+[ Exploratory Data Analysis ] (Head, Tail, Shape, Attributes, Dtypes, Info)
+          │
+          ▼
+[ Data Quality Verification ] (Nulls, Duplicates, Physical Constraints L > 0, T > 0)
+          │
+          ▼
+[ Data Preprocessing ] (Explicit Type Casting, Precision Standardization)
+          │
+          ▼
+[ Variable Taxonomy Classification ] (Discrete/Continuous Numerical, Identifiers, Flags)
+          │
+          ▼
+[ Error Metric Formulation ] (Error, Absolute Error, Relative Error, Percentage Error)
+          │
+          ▼
+[ Outlier Detection ] (1.5 × IQR Thresholding, Outlier_Flag assignment)
+          │
+          ▼
+[ Error Classification ] (Low <1%, Moderate 1-2%, High >=2% Tiers)
+          │
+          ▼
+[ Descriptive Statistics & Group Summaries ] (11-metric statistical summary, Length-wise groupby)
+          │
+          ▼
+[ Save Processed Dataset ] (data/processed/pendulum_processed_data.csv)
+          │
+          ▼
+[ Data Visualization Suite ] (Scheduled for Phase 3)
+```
 
 ---
 
-## 12. Current Phase
-### Phase 1: Project Foundation & Initial Data Exploration (Completed)
-- [x] Standard modular repository structure initialized.
-- [x] Reproducible synthetic experimental dataset created (`80` observations, `5` raw attributes).
-- [x] Comprehensive data validation module created (`src/data_preprocessing.py`).
-- [x] Automated integrity checks executed: `80` records, `0` missing values, `0` duplicates, `100%` positive values.
-- [x] Interactive Jupyter Notebook established (`notebooks/error_visualization.ipynb`) containing sections 1 to 13.
-- [x] Phase 2 modular skeletons prepared (`src/error_analysis.py`, `src/visualization.py`).
-- [x] Dependencies specified in `requirements.txt`.
-- [x] Git configuration (`.gitignore`, `LICENSE`) finalized.
+## 14. Current Phase Status
+### Phase 2: Data Exploration, Preprocessing & Error Analysis (Completed)
+- [x] Data exploration completed (dimensions, data types, descriptive info).
+- [x] Data quality analysis confirmed 0 missing values, 0 duplicates, 100% valid physical measurements.
+- [x] Preprocessing executed with strict unit preservation.
+- [x] Error calculations formulated and verified (`Error_s`, `Absolute_Error_s`, `Relative_Error`, `Percentage_Error`).
+- [x] IQR outlier detection executed (5 potential outliers identified and flagged).
+- [x] Error classification implemented (Low Error: 48.75%, Moderate Error: 28.75%, High Error: 22.50%).
+- [x] Descriptive statistical summary table computed covering all 11 required academic metrics.
+- [x] Grouped summary table aggregated across all 8 pendulum lengths.
+- [x] Processed dataset exported to `data/processed/pendulum_processed_data.csv`.
+- [x] Reusable functions integrated into `src/data_preprocessing.py` and `src/error_analysis.py`.
+- [x] Jupyter Notebook `notebooks/error_visualization.ipynb` updated with 14 foundation and analytical sections.
 
 ---
 
-## 13. Future Analysis (Phase 2 Roadmap)
-In Phase 2, the following analytical milestones will be implemented:
-1. **Error Metrics Pipeline:** Compute Absolute Error, Relative Error, and Percentage Error columns.
-2. **Descriptive Statistics:** Calculate mean experimental period, standard deviation, and variance grouped by length.
-3. **Outlier Detection:** Apply IQR (Interquartile Range) and Z-score criteria to isolate human timing anomalies.
-4. **Visualization Suite:**
-   - Plot 1: Theoretical vs. Experimental Period Curve (Scatter & Line)
-   - Plot 2: Absolute and Percentage Error Distributions (Histogram / KDE)
-   - Plot 3: Period Distribution Across Length Groups (Box & Whisker Plots)
-   - Plot 4: Error Residuals vs. Pendulum Length (Residual Scatter Plot)
-   - Plot 5: Correlation Heatmap of Physical and Error Variables
-5. **Key Findings & Interpretations:** Document insights on measurement precision, length-period non-linear scaling, and outlier patterns.
+## 15. Future Analysis (Phase 3 Roadmap)
+In Phase 3, the final visualization suite will be implemented:
+1. **Plot 1:** Theoretical vs. Experimental Period Curve (Scatter & Theoretical Line)
+2. **Plot 2:** Error Distribution Analysis (Histograms & KDE of Absolute and Percentage Errors)
+3. **Plot 3:** Period Distribution Across Length Groups (Box & Whisker Plots with Outlier Overlays)
+4. **Plot 4:** Error Residuals vs. Pendulum Length (Residual Scatter Plot)
+5. **Plot 5:** Error Quality Tier Composition (Pie Chart of Error Categories)
+6. **Plot 6:** Correlation Heatmap of Physical and Error Variables
+7. **Lab Record Deliverables:** Formulating key findings, conclusion, and results.
 
 ---
 
-## 14. How to Run
+## 16. How to Run
 
 ### Step 1: Clone the Repository
 ```bash
@@ -167,49 +238,32 @@ git clone https://github.com/DineshMoorthy007/error-visualization-experimental-d
 cd error-visualization-experimental-data
 ```
 
-### Step 2: Set Up Virtual Environment (Optional but Recommended)
-```bash
-# Windows
-python -m venv venv
-venv\Scripts\activate
-
-# Linux / macOS
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### Step 3: Install Dependencies
+### Step 2: Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### Step 4: Run Dataset Validation
+### Step 3: Run Preprocessing & Error Analysis
 ```bash
+# Run data preprocessing and exploration
 python src/data_preprocessing.py
+
+# Run complete error analysis and statistical pipeline
+python src/error_analysis.py
 ```
 
-### Step 5: Launch Jupyter Notebook
+### Step 4: Launch Interactive Jupyter Notebook
 ```bash
 jupyter notebook notebooks/error_visualization.ipynb
 ```
 
 ---
 
-## 15. GitHub Usage
-- **Repository URL:** `https://github.com/DineshMoorthy007/error-visualization-experimental-data`
-- **Branching Strategy:** Main branch for verified project phases (`main`).
-- **Commit Format:** Conventional semantic commits (e.g., `feat: setup phase 1 foundation and synthetic dataset`, `docs: update readme`).
+## 17. Sustainable Development Goals (SDG) Mapping & Disclaimer
 
----
+### SDG Alignment
+- **SDG 4: Quality Education (Target 4.4):** Fosters computational data literacy and measurement error awareness in STEM education.
+- **SDG 9: Industry, Innovation, and Infrastructure (Target 9.5):** Emphasizes precision measurement modeling, calibration standards, and scientific anomaly detection.
 
-## 16. Sustainable Development Goals (SDG) Mapping
-
-| SDG Goal | Target / Focus | Project Alignment |
-| :--- | :--- | :--- |
-| **SDG 4: Quality Education** | Target 4.4 (Technical and STEM Skills) | Enhances experiential STEM education by providing a reproducible computational framework for physics students to analyze experimental uncertainties and master data exploration techniques. |
-| **SDG 9: Industry, Innovation, and Infrastructure** | Target 9.5 (Scientific Research & Quality Assurance) | Emphasizes rigorous measurement verification, error modeling, and data-driven anomaly detection critical for industrial sensor calibration and scientific experimentation. |
-
----
-
-## 17. Disclaimer
-This dataset is a **synthetically constructed educational experimental dataset** created for the *Data Exploration and Visualization* course project. While mathematically and physically modeled around the theoretical formula $T = 2\pi\sqrt{L/g}$ with realistic human reaction variance, the values were generated using computational algorithms and were not recorded in a physical laboratory session.
+### Disclaimer
+This dataset is a **synthetically constructed educational experimental dataset** created for the *Data Exploration and Visualization* course project. While modeled around theoretical pendulum physics ($T = 2\pi\sqrt{L/g}$) with realistic human reaction variances, the values were generated using computational algorithms and were not recorded in a physical laboratory session.
