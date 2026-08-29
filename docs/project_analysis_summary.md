@@ -68,7 +68,7 @@ Discrepancies between empirical observations and theoretical predictions were qu
    *Mean Result:* $0.015243$ (Range: $0.000298$ to $0.102896$).
 
 4. **Percentage Error** (`Percentage_Error`):
-   $$E_{\%} = E_{\text{rel}} \times 100\% = \left(\frac{|T_{\text{exp}} - T_{\text{theo}}|}{T_{\text{theo}}}\right) \times 100\%$$
+   $$E_{\text{pct}} = E_{\text{rel}} \times 100 = \left(\frac{|T_{\text{exp}} - T_{\text{theo}}|}{T_{\text{theo}}}\right) \times 100$$
    *Mean Result:* $1.5243\%$ ($\text{SD} = 1.7770\%$; Median = $1.0119\%$; Min = $0.0298\%$; Max = $10.2896\%$).
 
 ---
